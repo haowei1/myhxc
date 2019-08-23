@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <title>管理权限</title>
+  <link rel="stylesheet" type="text/css" href="public/layui/css/layui.css">
+  <link rel="stylesheet" type="text/css" href="https://www.layui.com/admin/std/dist/layuiadmin/style/admin.css">
+  <link href="public/css/common.css" type="text/css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="public/css/nav.css">
+  <link rel="stylesheet" type="text/css" href="public/css/iconfont.css">
+  <script src="public/js/jquery-3.2.1.min.js"></script>
+  <script src="public/layui/layui.js"></script>
+  <script src="public/js/common.js"></script>
+  <script src="public/js/yhxc.js"></script>
+</head>
+
+<body>
+  <div class="layui-row layui-col-space10" style="padding: 10px; background: #fff;">
+    <div class="layui-btn-group demoTable">
+      <button class="layui-btn" data-type="addData"><i class="layui-icon">&#xe608;</i>保存</button>
+    </div>
+    <table class="layui-table" id="dataTable" lay-filter="dataFilter"></table>
+
+  </div>
+  <script type="text/javascript" src="public/js/nav.js"></script>
+
+  <script>
+    var formLayerIndex;
+    var layero;
+    layui.use(['table'], function () {
+      var $ = layui.jquery;
+      var table = layui.table;
+      var menuIdList = [];
+      $.ajax({
+        type: 'get',
+        url: './m0009/role/list/' + getUrlParam('uuid') + '?random=' + Math.random(),
+        async: false,
+        success: function (ret) {
+          if (ret.code != 0) {
+            layer.alert(ret.msg)
+          } else {
+            if (ret.data.length !== 0) {
+              menuIdList = [];
+              $.each(ret.data, function (i, record) {
+                menuIdList.push(record.menuUuid)
+              });
+            }
+          }
+        }
+      });
+      // 渲染表格
+      table.render({
+        elem: '#dataTable'
+        , url: './m0003/list?random=' + Math.random()
+        , method: 'post'
+        , cols: [[
+          { type: 'checkbox' }
+          , { type: 'numbers', title: '序号' }
+          , {
+            field: 'menuName', title: '名称', width: 500, templet: function (res) {
+              if (res.leavelId === 1) {
+                return '<strong>' + res.menuName + '</strong>';
+
+              } else if (res.leavelId === 2) {
+                return '&nbsp;&nbsp;&nbsp;&nbsp;├─&nbsp;&nbsp;' + res.menuName;
+              }
+            }
+          }
+        ]],
+        parseData: function (res) {
+          var retRecord = [];
+          console.log(menuIdList);
+          $.each(res.data, function (i, record) {
+            var index = $.inArray(record.uuid, menuIdList);
+            if (index >= 0) {
+              record.LAY_CHECKED = true;
+            }
+            retRecord.push(record);
+          })
+          res.data = retRecord;
+          return res;
+        }
+        , page: false
+      });
+      var active = {
+        addData: function (othis) {
+          var checkStatus = table.checkStatus('dataTable');
+          var data = checkStatus.data;
+          if (data.length === 0) {
+            layer.alert("没有选中任何数据");
+            return;
+          } else {
+            var arry = '';
+            $.each(data, function (i, record) {
+              if (!arry) {
+                arry = record.uuid;
+                if (record.parentId) {
+                  arry = arry + "," + record.parentId;
+                }
+              } else {
+                arry = arry + "," + record.uuid;
+                if (record.parentId) {
+                  arry = arry + "," + record.parentId;
+                }
+              }
+            })
+            $.ajax({
+              type: 'post',
+              url: './m0009/add/role?random=' + Math.random(),
+              data: {
+                'uuid': getUrlParam('uuid'),
+                'menuUuid': arry
+              },
+              success: function (data) {
+                if (data.code != 0) {
+                  layer.alert(data.msg)
+                } else {
+                  top.window.location.href = './M000901.html?random=' + Math.random()
+                }
+              }
+            })
+          }
+        }
+      };
+      $('.layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+      });
+    });
+  </script>
+
+</body>
+
+</html>

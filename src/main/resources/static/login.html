@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>登录</title>
+	<link rel="stylesheet" href="public/layui/css/layui.css" media="all" />
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0
+		}
+
+		html, body {
+			height: 100%;
+			overflow: hidden
+		}
+
+		#tableheiht {
+			font-family: "微软雅黑";
+			font-size: 36px;
+			color: #FFF;
+			text-align: center;
+			height: 36px;
+			width: 100%;
+			padding-bottom: 50px;
+			padding-top: 150px
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #069;
+			background-image: url(./public/images/loginbg3.png);
+			width: 100%;
+			height: 100%;
+			background-repeat: no-repeat;
+			background-size: 100% 100%;
+		}
+
+		.login {
+			width: 648px;
+			height: 424px;
+			background: #fff;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -344px;
+			margin-top: -212px;
+			overflow: hidden;
+			box-shadow: 3px 10px 10px rgba(0, 0, 0, 0.3)
+		}
+
+		.login .loginTop {
+			width: 648px;
+			height: 210px;
+			background: url(./public/images/loginTop_bg.jpg) no-repeat;
+			background-size: 100%;
+			overflow: hidden
+		}
+
+		.login .loginTop .tit1 {
+			margin: 80px 50px;
+			line-height: 30px;
+			font-size: 30px;
+			color: #fff;
+			font-weight: bold;
+			letter-spacing: 0.1em;
+			text-shadow: 1px 2px 2px rgba(0, 0, 0, 0.3)
+		}
+
+		.login .loginBottom {
+			padding: 25px 50px;
+		}
+
+		.login .loginBottom .logo {
+			height: 146px;
+			float: left;
+		}
+
+		.login .loginBottom .logo img {
+			height: 100%;
+		}
+
+		.login .loginBottom .form {
+			width: 330px;
+			float: left;
+			margin-left: 50px;
+			padding-top: 10px;
+		}
+
+		.login .loginBottom .form li {
+			margin-bottom: 17px;
+			list-style: none;
+			overflow: hidden
+		}
+
+		.login .loginBottom .form li label {
+			width: 50px;
+			height: 32px;
+			margin-right: 10px;
+			line-height: 32px;
+			display: block;
+			float: left;
+			text-align: right;
+			font-size: 12px;
+			color: #666;
+		}
+
+		.login .loginBottom .form li .input {
+			width: 248px;
+			height: 32px;
+			border: 1px solid #699;
+			line-height: 32px;
+			padding: 0 10px;
+			line-height: 34px;
+			font-size: 12px;
+			color: #999;
+			float: left;
+			border-radius: 6px;
+		}
+
+		.login .loginBottom .form li .button {
+			width: 126px;
+			height: 40px;
+			float: left;
+			background: url(./public/images/login_submit.png) no-repeat;
+			text-indent: -9999px;
+		}
+		.layui-input {
+			width: 300px;
+		}
+		.layui-btn { 
+			width: 150px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="login">
+		<div class="loginTop">
+			<p class="tit1">养护巡查管理平台</p>
+		</div>
+		<div class="loginBottom">
+			<form action="" class="layui-form" method="post">
+				<div class="layui-form-item">
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-block">
+						<input type="text" name="User_Code" required lay-verify="required" placeholder="用户名" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">密码</label>
+					<div class="layui-input-block">
+						<input type="password" name="User_Psd" required lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button lay-submit lay-filter="login" class="layui-btn">登录</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript" src="public/layui/layui.js"></script>
+	<script>
+		layui.use(['form', 'layer', 'jquery'], function () {
+			var form = layui.form;
+			var $ = layui.jquery;
+			var layer = layui.layer;
+			form.on('submit(login)', function (data) {
+				/*console.log(data.field);*/
+				$.ajax({
+					type: 'post',
+					url: './m0001/user/login?random=' + Math.random(),
+					data: {
+						form: data.field
+					},
+					success: function (ret) {
+						if (ret.code != 0) {
+							layer.alert('用户名或密码错误，请重试！');
+						} else {
+							top.window.location.href = './M000201.html'
+						}
+					},
+					error: function (e) {
+						layer.alert('用户名或密码错误，请重试！');
+					}
+				});
+				return false;
+			})
+		})
+	</script>
+</body>
+
+</html>

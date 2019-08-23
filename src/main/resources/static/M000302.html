@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <title>管理菜单</title>
+  <link rel="stylesheet" type="text/css" href="public/layui/css/layui.css">
+  <link href="public/css/common.css" type="text/css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="public/css/nav.css">
+  <link rel="stylesheet" type="text/css" href="public/css/iconfont.css">
+  <script src="public/js/jquery-3.2.1.min.js"></script>
+  <script src="public/layui/layui.js"></script>
+  <script src="public/js/common.js"></script>
+  <script src="public/js/yhxc.js"></script>
+  <style>
+    .layui-form-label{width:60px; padding: 9px 0;}
+      .layui-input-block{margin-left: 80px;}
+      </style>
+</head>
+
+<body>
+
+  <form class="layui-form p20" action="" lay-filter="editForm">
+    <input type="hidden" name="uuid" id="uuid">
+    <div class="layui-form-item">
+      <div class="layui-inline">
+        <label class="layui-form-label">所属菜单</label>
+        <div class="layui-input-block">
+          <select class="layui-input" name="parentId" id="parentId" lay-search="">
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">ID</label>
+      <div class="layui-input-block">
+        <input type="text" name="menuId" lay-verify="title" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">名称</label>
+      <div class="layui-input-block">
+        <input type="text" name="menuName" lay-verify="title" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">url</label>
+      <div class="layui-input-block">
+        <input type="text" name="menuUrl" lay-verify="title" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit="" lay-filter="dataEdit">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </form>
+  <script>
+    layui.use(['form'], function () {
+      var form = layui.form;
+      var $ = layui.$;
+      $.ajax({
+        type: 'post',
+        url: './m0003/list?random=' + Math.random(),
+        success: function (ret) {
+          if (ret.code != 0) {
+            layer.alert(ret.msg);
+          } else {
+            $("#parentId").html("");
+            $("#parentId").append("<option value=''>请选择</option>")
+            $.each(ret.data, function (i, record) {
+              if (record.leavelId === 1) {
+                $("#parentId").append("<option value=" + record.uuid + "><strong>" + record.menuName + "</strong></option>");
+              }
+            });
+            form.render();
+            $("#uuid").val('');
+            if (getUrlParam('uuid')) {
+              $.ajax({
+                type: 'get',
+                url: './m0003/get/' + getUrlParam('uuid') + '?random=' + Math.random(),
+                success: function (ret) {
+                  if (ret.code != 0) {
+                    layer.alert(ret.msg);
+                  } else {
+                    form.val('editForm', {
+                      "uuid": ret.data.uuid,
+                      "parentId": ret.data.parentId,
+                      "menuId": ret.data.menuId,
+                      "menuUrl": ret.data.menuUrl,
+                      "menuName": ret.data.menuName
+                    })
+                  }
+                },
+                error: function (e) {
+                  layer.alert('系统发生错误，请联系管理员！');
+                }
+              })
+            }
+          }
+        },
+        error: function (e) {
+          layer.alert('系统发生错误，请联系管理员！');
+        }
+      })
+
+      form.on('submit(dataEdit)', function (data) {
+        var postData = data.field
+        $.ajax({
+          type: 'post',
+          url: './m0003/edit?random=' + Math.random(),
+          data: postData,
+          success: function (ret) {
+            if (ret.code != 0) {
+              layer.alert(ret.msg);
+            } else {
+              top.window.location.href = './M000301.html?random=' + Math.random()
+            }
+          },
+          error: function (e) {
+            layer.alert('系统发生错误，请联系管理员！');
+          }
+        })
+        return false;
+      })
+      $('.layui-btn').on('click', function () {
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+      });
+    });
+  </script>
+</body>
+
+</html>

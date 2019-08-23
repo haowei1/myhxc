@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title>添加桥梁信息</title>
+    <link rel="stylesheet" type="text/css" href="public/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="https://www.layui.com/admin/std/dist/layuiadmin/style/admin.css">
+    <link href="public/css/common.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css" />
+    <link rel="stylesheet" type="text/css" href="public/css/iconfont.css">
+    <script src="public/js/jquery-3.2.1.min.js"></script>
+    <script src="public/layui/layui.js"></script>
+    <script src="http://webapi.amap.com/maps?v=1.4.9&key=adc69981b70fa8bf12bbd719fbf5d03b&plugin=AMap.Autocomplete,AMap.PlaceSearch,AMap.MouseTool,AMap.CitySearch"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <script src="public/js/common.js"></script>
+    <script src="public/js/yhxc.js"></script>
+    <style>
+        .layui-form-label{width:130px; padding:9px 10px 9px 0;}
+        .layui-form-item .layui-input-inline{width:120px}
+        .layui-form-item .layui-input-inline .layui-input-block .layui-form-select{width:430px}
+        .layui-form-select{width:160px}
+        .layui-input{width:160px}
+        .layui-input-block{margin-left: 140px;}
+        .layui-textarea{width:444px; border:1px solid #ececec;}
+        .main-container{width:100%; height:100%; position: absolute; top:0; left: 0; background: #fff; display: none;}
+        #addressMap{height:30px; border:1px solid #ececec; padding:0 10px}
+        #btn-baidumap{height:30px; border:1px solid #ececec;}
+    </style>
+</head>
+<body>
+<form class="layui-form p20 pl0" id="mainForm" action="" lay-filter="editForm">
+    <input type="hidden" name="uuid" id="uuid">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">路线编号</label>
+            <div class="layui-input-inline">
+                <select name="roadNumber" id="roadNumber" lay-verify="required" lay-filter="roadNumber" lay-search="">
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">路线名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="roadName" lay-verify="required" autocomplete="off" class="layui-input" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">桥梁编号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="bridgeNumber" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">桥梁名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="bridgeName" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">桥位桩号</label>
+            <div class="layui-input-inline">
+                <input type="text" name="bridgePile" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">起点桩号(公里)</label>
+            <div class="layui-input-inline">
+                <input type="text" name="startPileKm" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">起点桩号(米)</label>
+            <div class="layui-input-inline">
+                <input type="text" name="startPileM" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">终点桩号(公里)</label>
+            <div class="layui-input-inline">
+                <input type="text" name="endPileKm" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">终点桩号(米)</label>
+            <div class="layui-input-inline">
+                <input type="text" name="endPileM" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">空间位置</label>
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" id="btnMap" style="margin:3px 0">请标注空间位置</button>
+            <textarea class="layui-textarea" name="areaAddress" id="areaAddress" readonly></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">养护单位</label>
+            <div class="layui-input-block">
+                <select class="layui-input" name="belongDep" id="belongDep" lay-filter="belongDep">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">里程</label>
+            <div class="layui-input-inline">
+                <input type="text" name="areaMileage" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">面积</label>
+            <div class="layui-input-inline">
+                <input type="text" name="areaArea" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block" style="margin-left: 140px;">
+            <button class="layui-btn" lay-submit="" lay-filter="dataEdit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<!--地图标注区域-->
+<div class="main-container">
+    <div class="search-form">
+        <form id="form1">
+            <input type="search" name="addressMap" id="addressMap" placeholder="搜索" style="width:85%" />
+            <button type="button" class="mui-btn" id="btn-baidumap" style="width:14%;" />搜索</button>
+        </form>
+    </div>
+    <div id="container" style="top:40px"></div>
+    <div class="button-group">
+        <input type="button" class="button" value="鼠标绘制面" id="polygon" />
+    </div>
+    <div id="input" style="width:400px; height:100px; background:#fff; z-index:9999; position:fixed; left:0; top:100px; display:none"></div>
+</div>
+<script>
+    var map=new AMap.Map('container',{
+        resizeEnable: true
+    });
+    var areaAddress;
+    $(document).ready(function (e) {
+        var mouseTool=new AMap.MouseTool(map);
+        AMap.event.addDomListener(document.getElementById('ploygon'),'click',function () {
+            mouseTool.ploygon();
+        },false)
+        $('#btnMap').click(function () {
+            $('.main-container').show();
+            $('#mainForm').hide();
+
+        })
+    })
+</script>
+</body>
+</html>
