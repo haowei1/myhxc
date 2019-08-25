@@ -1,5 +1,6 @@
 package com.hdy.myhxc.service.impl;
 
+import com.hdy.myhxc.exception.AppException;
 import com.hdy.myhxc.mapper.UserMapper;
 import com.hdy.myhxc.model.User;
 import com.hdy.myhxc.model.UserExample;
@@ -40,9 +41,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> login(String name, String password) {
+    public User login(String name, String password) {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andUserCodeEqualTo(name).andUserPsdEqualTo(password);
-        return userMapper.selectByExample(userExample);
+        List<User> users = userMapper.selectByExample(userExample);
+        if (users == null || users.size() == 0) {
+            throw new AppException("用户名和密码不正确，请重新输入！");
+        } else {
+            return users.get(0);
+        }
     }
 }
