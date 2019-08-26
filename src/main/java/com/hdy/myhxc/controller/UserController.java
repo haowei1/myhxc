@@ -51,7 +51,6 @@ public class UserController {
 
     @RequestMapping("user/list")
     public ResponseEntity<ResultData> showUserList(@ModelAttribute FormInfo info) {
-        System.out.println("111111111111111");
         return new ResponseEntity<>(userServiceImpl.getUserList(info.getForm().get("userNm"), info.getPage(), info.getLimit()), HttpStatus.OK);
     }
 
