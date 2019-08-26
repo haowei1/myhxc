@@ -1,5 +1,6 @@
 package com.hdy.myhxc.service;
 
+import com.hdy.myhxc.entity.ResultData;
 import com.hdy.myhxc.model.User;
 
 import java.util.List;
@@ -44,5 +45,21 @@ public interface UserService {
      * @return
      */
     User login(String name, String password);
+
+    /**
+     * 获取用户菜单
+     * @return
+     */
+    ResultData getUserMenu();
+
+    /**
+     * 查询所有用户信息
+     * @param userNm
+     * @param page
+     * @param limit
+     * @return
+     */
+    ResultData getUserList(String userNm, int page, int limit);
+
 
 }

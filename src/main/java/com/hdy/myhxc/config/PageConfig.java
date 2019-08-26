@@ -8,6 +8,7 @@ import java.util.Properties;
 
 @Configuration
 public class PageConfig {
+
     @Bean
     public PageHelper pageHelper() {
         PageHelper pageHelper = new PageHelper();

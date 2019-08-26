@@ -24,9 +24,9 @@
 		<table tableName="m_user" domainObjectName="User"/>
 		<table tableName="m_menu" domainObjectName="Menu"/>
 		<table tableName="m_role" domainObjectName="Role"/>
-		<table tableName="m_roleauthority" domainObjectName="Roleauthority"/>
-		<table tableName="m_userdep" domainObjectName="Userdep"/>
-		<table tableName="m_userrole" domainObjectName="Userrole"/>
+		<table tableName="m_roleauthority" domainObjectName="RoleAuthority"/>
+		<table tableName="m_userdep" domainObjectName="UserDep"/>
+		<table tableName="m_userrole" domainObjectName="UserRole"/>
 
 	</context>
 </generatorConfiguration>
