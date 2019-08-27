@@ -12,33 +12,6 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * 查询全部
-     * @return
-     */
-    List<User> selAll();
-
-    /**
-     * 新增
-     * @param user
-     * @return
-     */
-    int insUser(User user);
-
-    /**
-     * 更新
-     * @param user
-     * @return
-     */
-    int updUser(User user);
-
-    /**
-     * 删除
-     * @param uuid
-     * @return
-     */
-    int delById(String uuid);
-
-    /**
      * 登录 根据姓名和密码查询
      * @param name
      * @param password
@@ -47,7 +20,7 @@ public interface UserService {
     User login(String name, String password);
 
     /**
-     * 获取用户菜单
+     * 获取左侧用户菜单
      * @return
      */
     ResultData getUserMenu();
@@ -61,5 +34,18 @@ public interface UserService {
      */
     ResultData getUserList(String userNm, int page, int limit);
 
+    /**
+     * 用来编辑学生，可新增或修改
+     * @param user
+     * @return
+     */
+    int editUser(User user);
+
+    /**
+     * 获取当前用户的权限信息
+     * @param uuid
+     * @return
+     */
+    User getUserRole(String uuid);
 
 }
