@@ -16,5 +16,17 @@ public interface MenuService {
      */
     ResultData getMenuList(int page, int limit);
 
+    /**
+     * 根据id删除菜单信息（如果是父菜单，则删除其下的所有子菜单）
+     * @param uuid
+     * @return
+     */
+    int delMenu(String uuid);
 
+    /**
+     * 根据id获取菜单信息
+     * @param uuid
+     * @return
+     */
+    ResultData getMenu(String uuid);
 }

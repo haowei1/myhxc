@@ -9,7 +9,7 @@ import java.util.List;
  * @author m760384371
  * @date 2019/8/27
  */
-public class RoleMenu extends Role {
+public class RoleEx extends Role {
 
     private String userRoleUuid;
     private String roleAuthority;

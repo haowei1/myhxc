@@ -48,4 +48,25 @@ public interface UserService {
      */
     User getUserRole(String uuid);
 
+    /**
+     * 根据id删除用户
+     * @param uuid
+     * @return
+     */
+    int delUser(String uuid);
+
+    /**
+     * 根据多个uuid删除多个用户
+     * @param uuids
+     * @return
+     */
+    int delUsers(String[] uuids);
+
+    /**
+     * 根据id初始化密码
+     * @param uuid
+     * @return
+     */
+    int initPwd(String uuid);
+
 }

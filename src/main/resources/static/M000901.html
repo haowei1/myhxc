@@ -32,7 +32,6 @@
         </div>
         <div class="layui-inline">
           <button class="layui-btn" data-type="reload"><i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>搜索</button>
-          </button>
         </div>
       </div>
     </div>
@@ -173,7 +172,7 @@
               form.val('editForm', {
                 "uuid": obj.data.uuid,
                 "roleName": obj.data.roleName
-              })
+              });
             }
           });
         } else if (obj.event === 'del') {
@@ -204,7 +203,7 @@
         }
       });
       form.on('submit(dataEdit)', function (data) {
-        var postData = data.field
+        var postData = data.field;
         $.ajax({
           type: 'post',
           url: './m0009/edit?random=' + Math.random(),
@@ -220,9 +219,9 @@
           error: function (e) {
             layer.alert('系统发生错误，请联系管理员！');
           }
-        })
+        });
         return false;
-      })
+      });
       $('.layui-btn').on('click', function () {
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';

@@ -13,6 +13,7 @@ import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
  * @date 2019/8/23
  */
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -266,5 +268,32 @@ public class UserServiceImpl implements UserService {
             user.setUserRole(userRole);
         }
         return user;
+    }
+
+
+    @Override
+    public int delUser(String uuid) {
+        return userMapper.deleteByPrimaryKey(uuid);
+    }
+
+    @Override
+    public int delUsers(String[] uuids) {
+        int i = 0;
+        for (String uuid : uuids) {
+            i += userMapper.deleteByPrimaryKey(uuid);
+        }
+        return i;
+    }
+
+    @Override
+    public int initPwd(String uuid) {
+        User loginInfo = (User) request.getSession().getAttribute("userInfo");
+        User user = new User();
+        user.setUserPsd("1");
+        user.setUuid(uuid);
+        user.setUpdateDate(DateUtil.currentTime());
+        user.setUpdatePwdt(DateUtil.currentTime());
+        user.setUpdateUser(loginInfo.getUserNm());
+        return userMapper.updateByPrimaryKeySelective(user);
     }
 }

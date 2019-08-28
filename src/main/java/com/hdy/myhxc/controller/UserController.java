@@ -21,7 +21,6 @@ public class UserController {
 
     @Autowired
     private UserService userServiceImpl;
-
     @Autowired
     private HttpServletRequest request;
 
@@ -85,6 +84,42 @@ public class UserController {
     public ResponseEntity<ResultData> getUserRole(@PathVariable("uuid") String uuid) {
         ResultData resultData = new ResultData();
         resultData.setData(userServiceImpl.getUserRole(uuid));
+        return new ResponseEntity<>(resultData, HttpStatus.OK);
+    }
+
+    /**
+     * 根据id删除一个用户
+     * @param uuid
+     * @return
+     */
+    @RequestMapping("user/delete/{uuid}")
+    public ResponseEntity<ResultData> delUser(@PathVariable("uuid") String uuid) {
+        ResultData resultData = new ResultData();
+        resultData.setData(userServiceImpl.delUser(uuid));
+        return new ResponseEntity<>(resultData, HttpStatus.OK);
+    }
+
+    /**
+     * 根据id数组删除多个用户
+     * @param info
+     * @return
+     */
+    @RequestMapping("list/delete")
+    public ResponseEntity<ResultData> delUsers(@ModelAttribute FormInfo info) {
+        ResultData resultData = new ResultData();
+        resultData.setData(userServiceImpl.delUsers(info.getUuids()));
+        return new ResponseEntity<>(resultData, HttpStatus.OK);
+    }
+
+    /**
+     * 初始化密码
+     * @param info
+     * @return
+     */
+    @RequestMapping("user/initpw")
+    public ResponseEntity<ResultData> initPwd(@ModelAttribute FormInfo info) {
+        ResultData resultData = new ResultData();
+        resultData.setData(userServiceImpl.initPwd(info.getUuid()));
         return new ResponseEntity<>(resultData, HttpStatus.OK);
     }
 
