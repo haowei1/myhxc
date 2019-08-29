@@ -59,11 +59,11 @@ var xsui = {
 				if (ret.data && ret.data.menu && ret.data.menu.length > 0) {
 					$.each(ret.data.menu, function (i, record) {
 						strHtml +='<li class="nav-item">';
-						if (record.text === '首页') {
-							strHtml +='<a href="./index.html"><i class="my-icon nav-icon icon_1"></i><span>' + record.text + '</span></a>';
-						} else {
+						// if (record.text === '首页') {
+						// 	strHtml +='<a href="./index.html"><i class="my-icon nav-icon icon_1"></i><span>' + record.text + '</span></a>';
+						// } else {
 							strHtml +='<a href="javascript:;"><i class="my-icon nav-icon icon_1"></i><span>' + record.text + '</span><i class="my-icon nav-more"></i></a>';
-						}
+						// }
 						strHtml +='<ul>';
 						$.each(record.children, function (j, subrecord) {
 							strHtml +='<li><a href=".'+ subrecord.url + '"><span>' + subrecord.text + '</span></a></li>';

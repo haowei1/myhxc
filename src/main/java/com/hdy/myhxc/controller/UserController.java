@@ -39,7 +39,12 @@ public class UserController {
         return new ResponseEntity<>(resultData, HttpStatus.OK);
     }
 
-    @RequestMapping("dep/list")
+    /**
+     * 获取部门列表
+     * @param info
+     * @return
+     */
+//    @RequestMapping("dep/list")
     public ResponseEntity<ResultData> showDepList(@ModelAttribute FormInfo info) {
         return null;
     }

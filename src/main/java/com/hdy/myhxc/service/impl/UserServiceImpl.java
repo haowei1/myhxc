@@ -11,6 +11,7 @@ import com.hdy.myhxc.model.*;
 import com.hdy.myhxc.service.UserService;
 import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Override
     public ResultData getUserMenu() {
         List<TreeNode> tree = new ArrayList<>();
@@ -61,6 +61,8 @@ public class UserServiceImpl implements UserService {
         MenuExample menuExample = new MenuExample();
         menuExample.setOrderByClause("SORT");
         List<Menu> menuList = menuMapper.selectByExample(menuExample);
+        Logger logger = Logger.getLogger(UserServiceImpl.class);
+        logger.error(menuList.toString());
         // 获取当前登录的用户信息
         User loginInfo = (User) request.getSession().getAttribute("userInfo");
         List<String> menuUuids = new ArrayList<>();
@@ -135,7 +137,7 @@ public class UserServiceImpl implements UserService {
         return jsonTreeNode;
     }
 
-    public final static List<TreeNode> getChildrenNode(String pid,List<TreeNode> tree){
+    public final static List<TreeNode> getChildrenNode(String pid, List<TreeNode> tree){
         List<TreeNode> list=new ArrayList<>();
         for (TreeNode jsonTreeNode:tree) {
             if (jsonTreeNode.getPid()==null) {
@@ -151,7 +153,6 @@ public class UserServiceImpl implements UserService {
         }
         return list;
     }
-
 
     @Override
     public ResultData getUserList(String userNm, int page, int limit) {

@@ -43,12 +43,18 @@ public interface RoleService {
     ResultData getRoleList(String uuid);
 
     /**
-     * 根据id修改权限信息
+     * 根据id修改角色权限信息
      * @param roleId
      * @param menuIds
      * @return
      */
     int addRole(String roleId, List<String> menuIds);
 
-
+    /**
+     * 根据id编辑角色信息，无id则新增
+     * @param uuid
+     * @param roleName
+     * @return
+     */
+    int editRole(String uuid, String roleName);
 }

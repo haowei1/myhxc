@@ -3,14 +3,12 @@ package com.hdy.myhxc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hdy.myhxc.entity.ResultData;
+import com.hdy.myhxc.exception.AppException;
 import com.hdy.myhxc.mapper.MenuMapper;
 import com.hdy.myhxc.mapper.RoleAuthorityMapper;
 import com.hdy.myhxc.mapper.RoleMapper;
 import com.hdy.myhxc.mapper.ex.RoleExMapper;
-import com.hdy.myhxc.model.Menu;
-import com.hdy.myhxc.model.MenuExample;
-import com.hdy.myhxc.model.RoleAuthority;
-import com.hdy.myhxc.model.RoleAuthorityExample;
+import com.hdy.myhxc.model.*;
 import com.hdy.myhxc.model.ex.RoleEx;
 import com.hdy.myhxc.service.RoleService;
 import com.hdy.myhxc.util.DateUtil;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +38,8 @@ public class RoleServiceImpl implements RoleService {
     private RoleExMapper roleExMapper;
     @Autowired
     private RoleAuthorityMapper roleAuthorityMapper;
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public ResultData getList(String roleName, int page, int limit) {
@@ -56,7 +57,6 @@ public class RoleServiceImpl implements RoleService {
                     }
                 }
                 String roleAuthority = "";
-
                 MenuExample menuExample = new MenuExample();
                 menuExample.setOrderByClause("Leavel_ID, SORT");
                 List<Menu> menuList = menuMapper.selectByExample(menuExample);
@@ -126,7 +126,6 @@ public class RoleServiceImpl implements RoleService {
         return i;
     }
 
-
     /**
      * 方法  TODO 理解方法意思
      * @param list
@@ -140,4 +139,33 @@ public class RoleServiceImpl implements RoleService {
         return list;
     }
 
+    @Override
+    public int editRole(String uuid, String roleName) {
+        User loginInfo = (User) (request.getSession().getAttribute("userInfo"));
+        //判断用户名是否重复
+        RoleExample roleExample = new RoleExample();
+        roleExample.createCriteria().andRoleNameEqualTo(roleName);
+        List<Role> roleList = roleMapper.selectByExample(roleExample);
+        if (roleList != null && roleList.size() > 0) {
+            throw new AppException("角色名已存在！");
+        }
+        if (uuid != null && !"".equals(uuid)) {
+            // 编辑
+            Role role = new Role();
+            role.setUuid(uuid);
+            role.setRoleName(roleName);
+            role.setUpdateDate(DateUtil.currentTime());
+            role.setUpdateUser(loginInfo.getUserNm());
+            return roleMapper.updateByPrimaryKeySelective(role);
+        } else {
+            // 新增
+            String id = UUIDUtil.generateUUID();
+            Role role = new Role();
+            role.setUuid(id);
+            role.setRoleName(roleName);
+            role.setCreateDate(DateUtil.currentTime());
+            role.setCreateUser(loginInfo.getUserNm());
+            return roleMapper.insertSelective(role);
+        }
+    }
 }

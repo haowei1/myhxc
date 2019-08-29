@@ -2,6 +2,7 @@ package com.hdy.myhxc.controller;
 
 import com.hdy.myhxc.entity.FormInfo;
 import com.hdy.myhxc.entity.ResultData;
+import com.hdy.myhxc.model.Role;
 import com.hdy.myhxc.model.ex.RoleEx;
 import com.hdy.myhxc.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,11 @@ public class RoleController {
         return new ResponseEntity<>(roleServiceImpl.getList(info.getForm().get("roleName"), info.getPage(), info.getLimit()), HttpStatus.OK);
     }
 
+    /**
+     * 获取所有权限信息
+     * @param uuid
+     * @return
+     */
     @RequestMapping("role/list/{uuid}")
     public ResponseEntity<ResultData> getRoleList(@PathVariable String uuid) {
         return new ResponseEntity<>(roleServiceImpl.getRoleList(uuid), HttpStatus.OK);
@@ -62,7 +68,11 @@ public class RoleController {
         return new ResponseEntity<>(resultData, HttpStatus.OK);
     }
 
-
+    /**
+     * 根据id修改角色权限信息
+     * @param roleEx
+     * @return
+     */
     @RequestMapping("add/role")
     public ResponseEntity<ResultData> addRole(@ModelAttribute RoleEx roleEx){
         ResultData resultData = new ResultData();
@@ -70,5 +80,16 @@ public class RoleController {
         return new ResponseEntity<>(resultData, HttpStatus.OK);
     }
 
+    /**
+     * 编辑角色信息
+     * @param role
+     * @return
+     */
+    @RequestMapping("edit")
+    public ResponseEntity<ResultData> editRole(Role role) {
+        ResultData resultData = new ResultData();
+        resultData.setData(roleServiceImpl.editRole(role.getUuid(), role.getRoleName()));
+        return new ResponseEntity<>(resultData, HttpStatus.OK);
+    }
 
 }

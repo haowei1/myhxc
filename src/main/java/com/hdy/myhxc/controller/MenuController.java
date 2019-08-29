@@ -2,8 +2,8 @@ package com.hdy.myhxc.controller;
 
 import com.hdy.myhxc.entity.FormInfo;
 import com.hdy.myhxc.entity.ResultData;
+import com.hdy.myhxc.model.Menu;
 import com.hdy.myhxc.service.MenuService;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,4 +54,17 @@ public class MenuController {
     public ResponseEntity<ResultData> getMenu(@PathVariable String uuid) {
         return new ResponseEntity<>(menuServiceImpl.getMenu(uuid), HttpStatus.OK);
     }
+
+    /**
+     * 编辑或新增菜单
+     * @param menu
+     * @return
+     */
+    @RequestMapping("edit")
+    public ResponseEntity<ResultData> editMenu(@ModelAttribute Menu menu) {
+        ResultData resultData = new ResultData();
+        resultData.setData(menuServiceImpl.editMenu(menu));
+        return new ResponseEntity<>(resultData, HttpStatus.OK);
+    }
+
 }

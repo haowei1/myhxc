@@ -1,6 +1,7 @@
 package com.hdy.myhxc.service;
 
 import com.hdy.myhxc.entity.ResultData;
+import com.hdy.myhxc.model.Menu;
 
 /**
  * @author m760384371
@@ -29,4 +30,11 @@ public interface MenuService {
      * @return
      */
     ResultData getMenu(String uuid);
+
+    /**
+     * 编辑后新增菜单
+     * @param menu
+     * @return
+     */
+    ResultData editMenu(Menu menu);
 }

@@ -209,6 +209,10 @@
           url: './m0009/edit?random=' + Math.random(),
           data: postData,
           success: function (ret) {
+            form.val('editForm', {
+              "uuid": null,
+              "roleName": null
+            });
             if (ret.code != 0) {
               layer.alert(ret.msg);
             } else {
@@ -217,6 +221,10 @@
             }
           },
           error: function (e) {
+            form.val('editForm', {
+              "uuid": null,
+              "roleName": null
+            });
             layer.alert('系统发生错误，请联系管理员！');
           }
         });
