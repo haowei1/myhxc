@@ -19,4 +19,9 @@ public class MenuEx extends Menu {
     public void setChildren(List<MenuEx> children) {
         this.children = children;
     }
+
+    @Override
+    public String toString() {
+        return "MenuEx{}";
+    }
 }

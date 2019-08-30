@@ -6,6 +6,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
 
+/**
+ * @author m760384371
+ * @date 2019/8/29
+ */
 @Configuration
 public class PageConfig {
 

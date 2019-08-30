@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper
 @Repository
 public interface RoleExMapper {
+
     @SelectProvider(type = RoleExSqlProvider.class,method = "getRole")
     @Results({@Result(column = "UUID",property = "uuid",id = true,jdbcType = JdbcType.VARCHAR),
             @Result(column = "Role_Name",property = "roleName",jdbcType = JdbcType.VARCHAR),

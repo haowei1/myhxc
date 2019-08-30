@@ -15,7 +15,6 @@ import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.List;
  * @date 2019/8/27
  */
 @Service
-@Transactional
 public class RoleServiceImpl implements RoleService {
 
     @Autowired
@@ -79,7 +77,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public int delRole(String uuid) {
         int i = 0;
+        // 根据主键删除角色信息
         i += roleMapper.deleteByPrimaryKey(uuid);
+        // 同时将他对应的权限也删除
         RoleAuthorityExample roleAuthorityExample = new RoleAuthorityExample();
         roleAuthorityExample.createCriteria().andRoleUuidEqualTo(uuid);
         i += roleAuthorityMapper.deleteByExample(roleAuthorityExample);
@@ -101,6 +101,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public ResultData getRoleList(String uuid) {
         ResultData resultData = new ResultData();
+        // 获取角色的所有权限信息
         RoleAuthorityExample roleAuthorityExample = new RoleAuthorityExample();
         roleAuthorityExample.createCriteria().andRoleUuidEqualTo(uuid);
         List<RoleAuthority> roleAuthorityList = roleAuthorityMapper.selectByExample(roleAuthorityExample);
@@ -111,9 +112,12 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public int addRole(String roleId, List<String> menuIds) {
         int i = 0;
+        User loginInfo = (User) request.getSession().getAttribute("userInfo");
+        // 增加之前先删除所有
         RoleAuthorityExample roleAuthorityExample = new RoleAuthorityExample();
         roleAuthorityExample.createCriteria().andRoleUuidEqualTo(roleId);
         roleAuthorityMapper.deleteByExample(roleAuthorityExample);
+        // 去除集合中的重复
         removeDuplicate(menuIds);
         for (String menuId : menuIds) {
             RoleAuthority roleAuthority = new RoleAuthority();
@@ -121,19 +125,21 @@ public class RoleServiceImpl implements RoleService {
             roleAuthority.setRoleUuid(roleId);
             roleAuthority.setMenuId(menuId);
             roleAuthority.setCreateDate(DateUtil.currentTime());
+            roleAuthority.setCreateUser(loginInfo.getUserNm());
             i += roleAuthorityMapper.insertSelective(roleAuthority);
         }
         return i;
     }
 
     /**
-     * 方法  TODO 理解方法意思
+     * 利用HashSet去除重复
+     * 注解是为了屏蔽一些无关紧要的警告
      * @param list
      * @return
      */
     @SuppressWarnings(value = {"rawtypes", "unchecked"})
     private List<String> removeDuplicate(List<String> list){
-        HashSet h=new HashSet(list);
+        HashSet h = new HashSet(list);
         list.clear();
         list.addAll(h);
         return list;

@@ -14,7 +14,6 @@ import com.hdy.myhxc.util.UUIDUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import java.util.List;
  * @date 2019/8/23
  */
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -41,9 +39,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private HttpServletRequest request;
 
+    Logger logger = Logger.getLogger(UserServiceImpl.class);
+
     @Override
     public User login(String name, String password) {
         UserExample userExample = new UserExample();
+        // 只有用户名和密码同时符合时才可以登录
         userExample.createCriteria().andUserCodeEqualTo(name).andUserPsdEqualTo(password);
         List<User> users = userMapper.selectByExample(userExample);
         if (users == null || users.size() == 0) {
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
         MenuExample menuExample = new MenuExample();
         menuExample.setOrderByClause("SORT");
         List<Menu> menuList = menuMapper.selectByExample(menuExample);
-        Logger logger = Logger.getLogger(UserServiceImpl.class);
+
         logger.error(menuList.toString());
         // 获取当前登录的用户信息
         User loginInfo = (User) request.getSession().getAttribute("userInfo");
@@ -86,7 +87,7 @@ public class UserServiceImpl implements UserService {
             }
 
             for (Menu menu : menuList) {
-                if (menu.getParentId() != null && "".equals(menu.getParentId())) {
+                if (menu.getParentId() != null && !"".equals(menu.getParentId())) {
                     TreeNode treeNode = new TreeNode();
                     treeNode.setUuid(menu.getUuid());
                     treeNode.setId(menu.getMenuId());
@@ -124,7 +125,11 @@ public class UserServiceImpl implements UserService {
         return resultData;
     }
 
-
+    /**
+     *
+     * @param tree
+     * @return
+     */
     public final static List<TreeNode> getFatherNode(List<TreeNode> tree){
         List<TreeNode> jsonTreeNode = new ArrayList<>();
         for (TreeNode fatherTree : tree) {
@@ -137,6 +142,12 @@ public class UserServiceImpl implements UserService {
         return jsonTreeNode;
     }
 
+    /**
+     *
+     * @param pid
+     * @param tree
+     * @return
+     */
     public final static List<TreeNode> getChildrenNode(String pid, List<TreeNode> tree){
         List<TreeNode> list=new ArrayList<>();
         for (TreeNode jsonTreeNode:tree) {
@@ -159,11 +170,14 @@ public class UserServiceImpl implements UserService {
         ResultData resultData = new ResultData();
         PageHelper.startPage(page, limit);
         UserExample userExample = new UserExample();
+        // name不为空的话进行模糊查询
         if (userNm != null && !userNm.equals("")) {
             userExample.createCriteria().andUserNmLike("%" + userNm + "%");
         }
+        // 根据Create_Date 降序
         userExample.setOrderByClause("Create_Date DESC");
         List<User> userList = userMapper.selectByExample(userExample);
+        // 分页
         PageInfo<User> pageInfo = new PageInfo<>(userList);
         if (userList != null && userList.size() > 0) {
             resultData.setCount((int) pageInfo.getTotal());
@@ -271,18 +285,32 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-
     @Override
     public int delUser(String uuid) {
-        return userMapper.deleteByPrimaryKey(uuid);
+        return delUsersByUuid(uuid);
     }
 
     @Override
     public int delUsers(String[] uuids) {
         int i = 0;
         for (String uuid : uuids) {
-            i += userMapper.deleteByPrimaryKey(uuid);
+            i = delUsersByUuid(uuid);
         }
+        return i;
+    }
+
+    /**
+     * 删除User的封装
+     * @param uuid
+     * @return
+     */
+    public int delUsersByUuid(String uuid) {
+        int i = 0;
+        i += userMapper.deleteByPrimaryKey(uuid);
+        // 删除用户对应的角色信息
+        UserRoleExample userRoleExample = new UserRoleExample();
+        userRoleExample.createCriteria().andUserUuidEqualTo(uuid);
+        i += userRoleMapper.deleteByExample(userRoleExample);
         return i;
     }
 

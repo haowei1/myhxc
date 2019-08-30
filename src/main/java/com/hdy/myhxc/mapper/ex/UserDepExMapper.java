@@ -43,7 +43,7 @@ public interface UserDepExMapper {
     })
     public List<UserDepEx> getListForLevel3(@Param("uuid") String uuid);
 
-    @Select("select*from m_userdep where Dep_Level=#{Dep_Level}")
+    @Select("select * from m_userdep where Dep_Level = #{Dep_Level}")
     public List<UserDepEx> getListForLevel3ByNothing(@Param("Dep_Level") String depLevel);
 }
 

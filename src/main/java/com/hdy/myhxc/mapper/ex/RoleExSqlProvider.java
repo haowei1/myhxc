@@ -4,6 +4,12 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.jdbc.SQL;
 
 public class RoleExSqlProvider {
+
+    /**
+     * select UUID, Role_Name from m_role (where Role_name like % roleName %) order by create_Date
+     * @param roleName
+     * @return
+     */
     public String getRole(@Param("roleName") String roleName){
         SQL sql=new SQL();
         sql.SELECT("UUID");
@@ -15,7 +21,7 @@ public class RoleExSqlProvider {
         sql.ORDER_BY("Create_Date");
         return sql.toString();
     }
-    //a表  M_RoleAuthorityInfo,b表 M_Menu
+    //a表  M_RoleAuthorityInfo, b表 M_Menu
     //select b.UUID,b.Menu_ID,b.Menu_Name from M_RoleAuthority a left outer join M_Menu b on a.Menu_ID=b.UUID
     //where a.Role_UUID='roleUuid';
     //左外连接  将两个表数据连接  左表中不符合要求的值用null补全

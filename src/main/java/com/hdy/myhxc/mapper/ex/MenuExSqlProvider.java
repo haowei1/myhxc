@@ -9,6 +9,10 @@ import org.apache.ibatis.jdbc.SQL;
  */
 public class MenuExSqlProvider {
 
+    /**
+     * select * from m_menu where Leavel_ID = 1 order by sort
+     * @return
+     */
     public String getListForLevel1(){
         SQL sql = new SQL();
         sql.SELECT("*");
@@ -17,6 +21,12 @@ public class MenuExSqlProvider {
         sql.ORDER_BY("SORT");
         return sql.toString();
     }
+
+    /**
+     * select * from m_menu where Leavel_ID = 2 and where Parent_ID = '父id' order by sort
+     * @param uuid
+     * @return
+     */
     public String getListForLevel2(@Param("UUID")String uuid){
         SQL sql = new SQL();
         sql.SELECT("*");

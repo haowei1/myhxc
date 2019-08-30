@@ -5,14 +5,12 @@ import com.hdy.myhxc.mapper.UserDepMapper;
 import com.hdy.myhxc.mapper.ex.UserDepExMapper;
 import com.hdy.myhxc.model.UserDep;
 import com.hdy.myhxc.model.UserDepExample;
-import com.hdy.myhxc.model.UserRoleExample;
 import com.hdy.myhxc.model.ex.UserDepEx;
 import com.hdy.myhxc.service.UserDepService;
 import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,6 @@ import java.util.List;
  * @date 2019/8/26
  */
 @Service
-@Transactional
 public class UserDepServiceImpl implements UserDepService {
 
     @Autowired
@@ -99,7 +96,6 @@ public class UserDepServiceImpl implements UserDepService {
             return userDepMapper.updateByPrimaryKeySelective(userDep);
         }
     }
-
 
     /**
      * 封装编辑操作

@@ -22,14 +22,14 @@ public interface RoleService {
 
 
     /**
-     * 根据id删除权限
+     * 根据id删除角色
      * @param uuid
      * @return
      */
     int delRole(String uuid);
 
     /**
-     * 根据id删除多个权限
+     * 根据id删除多个角色
      * @param uuids
      * @return
      */

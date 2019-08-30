@@ -464,4 +464,24 @@ public class Menu {
     public void setBeizhu(String beizhu) {
         this.beizhu = beizhu == null ? null : beizhu.trim();
     }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+                "uuid='" + uuid + '\'' +
+                ", menuId='" + menuId + '\'' +
+                ", menuName='" + menuName + '\'' +
+                ", menuUrl='" + menuUrl + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", menuIco='" + menuIco + '\'' +
+                ", leavelId=" + leavelId +
+                ", sort=" + sort +
+                ", createUser='" + createUser + '\'' +
+                ", createDate=" + createDate +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateDate=" + updateDate +
+                ", delfg='" + delfg + '\'' +
+                ", beizhu='" + beizhu + '\'' +
+                '}';
+    }
 }

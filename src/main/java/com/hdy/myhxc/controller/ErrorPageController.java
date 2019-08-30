@@ -10,19 +10,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ErrorPageController {
 
+    /**
+     * 404页面
+     * @return
+     */
     @RequestMapping("error-404")
     public String toPage404(){
         return "error/error-404";
     }
 
+    /**
+     * 400页面
+     * @return
+     */
     @RequestMapping("error-400")
     public String toPage400() {
         return "error/error-400";
-    }
-
-    @RequestMapping("error-500")
-    public String toPage500() {
-        return "error/error-500";
     }
 
 }
