@@ -13,6 +13,7 @@ import com.hdy.myhxc.model.ex.RoleEx;
 import com.hdy.myhxc.service.RoleService;
 import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class RoleServiceImpl implements RoleService {
         ResultData resultData = new ResultData();
         PageHelper.startPage(page, limit);
         ArrayList<String> menuUuidList = new ArrayList<>();
+        // 根据roleName获取其所有权限信息 没有roleName为获取全部
         List<RoleEx> roleList = roleExMapper.getRole(roleName);
         if (roleList != null && roleList.size() > 0) {
             PageInfo<RoleEx> pageInfo = new PageInfo<>(roleList);
@@ -51,10 +53,11 @@ public class RoleServiceImpl implements RoleService {
             for (RoleEx roleMenu : roleList) {
                 if (roleMenu.getMenuList() != null && roleMenu.getMenuList().size() > 0) {
                     for (Menu menu : roleMenu.getMenuList()) {
-                        menuUuidList.add(menu.getUuid());
+                        menuUuidList.add(menu.getUuid()+"");
                     }
                 }
                 String roleAuthority = "";
+                // 查询所有菜信息
                 MenuExample menuExample = new MenuExample();
                 menuExample.setOrderByClause("Leavel_ID, SORT");
                 List<Menu> menuList = menuMapper.selectByExample(menuExample);

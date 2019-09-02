@@ -3,9 +3,11 @@ package com.hdy.myhxc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.hdy.myhxc.entity.ResultData;
 import com.hdy.myhxc.mapper.MenuMapper;
+import com.hdy.myhxc.mapper.RoleAuthorityMapper;
 import com.hdy.myhxc.mapper.ex.MenuExMapper;
 import com.hdy.myhxc.model.Menu;
 import com.hdy.myhxc.model.MenuExample;
+import com.hdy.myhxc.model.RoleAuthorityExample;
 import com.hdy.myhxc.model.User;
 import com.hdy.myhxc.model.ex.MenuEx;
 import com.hdy.myhxc.service.MenuService;
@@ -15,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -33,12 +34,9 @@ public class MenuServiceImpl implements MenuService {
     @Autowired
     private MenuMapper menuMapper;
     @Autowired
+    private RoleAuthorityMapper roleAuthorityMapper;
+    @Autowired
     private HttpServletRequest request;
-
-    /**
-     * log4j
-     */
-    private Logger logger = Logger.getLogger(MenuServiceImpl.class);
 
     @Override
     public ResultData getMenuList(int page, int limit) {
@@ -47,7 +45,6 @@ public class MenuServiceImpl implements MenuService {
         PageHelper.startPage(page, limit);
         // 获取一级菜单
         List<MenuEx> menuExList1 = menuExMapper.getListForLevel1();
-        logger.error("获取的menuList:" + menuExList1);
         List<MenuEx> dataList = new ArrayList<>();
         for (MenuEx temp1 : menuExList1) {
             MenuEx menuEx1 = new MenuEx();
@@ -66,7 +63,6 @@ public class MenuServiceImpl implements MenuService {
         }
         resultData.setData(dataList);
         resultData.setCount(dataList.size());
-        logger.error("resultData的值：" + resultData);
         return resultData;
     }
 
@@ -74,6 +70,8 @@ public class MenuServiceImpl implements MenuService {
     public int delMenu(String uuid) {
         int i = 0;
         i += menuMapper.deleteByPrimaryKey(uuid);
+        // 将角色对应的菜单也全部删除
+        i += delMenuRoleAuthority(uuid);
         // 判断删除的菜单有没有子菜单
         MenuExample menuExample = new MenuExample();
         menuExample.createCriteria().andParentIdEqualTo(uuid);
@@ -85,10 +83,27 @@ public class MenuServiceImpl implements MenuService {
                 MenuExample menuExample1 = new MenuExample();
                 menuExample1.createCriteria().andParentIdEqualTo(menu.getParentId());
                 i += menuMapper.deleteByExample(menuExample1);
+                // 将子角色对应的菜单也全部删除
+                i += delMenuRoleAuthority(menu.getUuid());
             }
         }
         return i;
     }
+
+    /**
+     * 根据菜单id刪除对应的权限
+     * @param uuid
+     * @return
+     */
+    public int delMenuRoleAuthority(String uuid) {
+        int i = 0;
+        RoleAuthorityExample roleAuthorityExample = new RoleAuthorityExample();
+        roleAuthorityExample.createCriteria().andMenuIdEqualTo(uuid);
+        i += roleAuthorityMapper.deleteByExample(roleAuthorityExample);
+        return i;
+    }
+
+
 
     @Override
     public ResultData getMenu(String uuid) {

@@ -95,7 +95,7 @@
   </form>
 
   <script>
-    var formLayerIndex;
+    // var formLayerIndex;
     layui.use(['form'], function () {
       var form = layui.form;
       var $ = layui.$;
@@ -116,7 +116,7 @@
         error: function (e) {
           layer.alert('系统发生错误，请联系管理员！');
         }
-      })
+      });
       $.ajax({
         type: 'post',
         url: './m0002/dep/list?random=' + Math.random(),
@@ -181,7 +181,7 @@
         }
       }),
         form.on('submit(userEdit)', function (data) {
-          var postData = data.field
+          var postData = data.field;
           if (postData.depLevele3) {
             postData.userDep = postData.depLevele3
           } else if (postData.depLevele2) {
@@ -227,9 +227,9 @@
               }
             },
             error: function (e) {
-              layer.alert('用户名或密码错误，请重试！');
+              layer.alert("用户名已存在，请重新输入！");
             }
-          })
+          });
           return false;
         })
     });

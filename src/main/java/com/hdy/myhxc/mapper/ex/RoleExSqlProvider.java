@@ -21,10 +21,13 @@ public class RoleExSqlProvider {
         sql.ORDER_BY("Create_Date");
         return sql.toString();
     }
-    //a表  M_RoleAuthorityInfo, b表 M_Menu
-    //select b.UUID,b.Menu_ID,b.Menu_Name from M_RoleAuthority a left outer join M_Menu b on a.Menu_ID=b.UUID
-    //where a.Role_UUID='roleUuid';
-    //左外连接  将两个表数据连接  左表中不符合要求的值用null补全
+    /**
+     * 左外连接  将两个表数据连接  左表中不符合要求的值用null补全
+     *  a表  M_RoleAuthorityInfo, b表 M_Menu
+     *  select b.UUID,b.Menu_ID,b.Menu_Name from M_RoleAuthority a left outer join M_Menu b on a.Menu_ID=b.UUID where a.Role_UUID='roleUuid';
+     * @param roleUuid
+     * @return
+     */
     public String getAuthority(@Param("roleUuid")String roleUuid){
         SQL sql=new SQL();
         sql.SELECT("b.UUID");

@@ -1,14 +1,19 @@
 package com.hdy.myhxc.service.impl;
 
 import com.hdy.myhxc.entity.ResultData;
+import com.hdy.myhxc.exception.AppException;
 import com.hdy.myhxc.mapper.UserDepMapper;
+import com.hdy.myhxc.mapper.UserMapper;
 import com.hdy.myhxc.mapper.ex.UserDepExMapper;
+import com.hdy.myhxc.model.User;
 import com.hdy.myhxc.model.UserDep;
 import com.hdy.myhxc.model.UserDepExample;
+import com.hdy.myhxc.model.UserExample;
 import com.hdy.myhxc.model.ex.UserDepEx;
 import com.hdy.myhxc.service.UserDepService;
 import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +31,8 @@ public class UserDepServiceImpl implements UserDepService {
     private UserDepMapper userDepMapper;
     @Autowired
     private UserDepExMapper userDepExMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public ResultData getDepList(int page, int limit) {
@@ -38,12 +45,16 @@ public class UserDepServiceImpl implements UserDepService {
         return resultData;
     }
 
-    //test递归
+    /**
+     * 递归获取部门信息
+     * @param retData
+     * @param list
+     */
     public static void getChildren(List<UserDep> retData, List<UserDepEx> list){
         if (list.size() > 0 && list != null){
             for (UserDepEx userDep : list) {
                 retData.add(userDep);
-                if (userDep.getChildren()!=null){
+                if (userDep.getChildren() != null){
                     List<UserDepEx> children = userDep.getChildren();
                     if (children.size() > 0 && null != children){
                         getChildren(retData, children);
@@ -65,25 +76,36 @@ public class UserDepServiceImpl implements UserDepService {
 
     @Override
     public int delDep(String uuid) {
-        int i = 0;
-        i = userDepMapper.deleteByPrimaryKey(uuid);
-        UserDepExample userDepExample = new UserDepExample();
-        userDepExample.createCriteria().andDepTopidEqualTo(uuid);
-        List<UserDep> userDepList = userDepMapper.selectByExample(userDepExample);
-        if (userDepList.size() > 0 && !userDepList.equals("")) {
-            for (UserDep userDep : userDepList) {
-                i += userDepMapper.deleteByPrimaryKey(userDep.getUuid());
-                UserDepExample example = new UserDepExample();
-                example.createCriteria().andDepTopidEqualTo(userDep.getUuid());
-                i += userDepMapper.deleteByExample(example);
+        // 删除前先判断是否有人在此部门
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andUserDepEqualTo(uuid);
+        List<User> userList = userMapper.selectByExample(userExample);
+        if (userList != null && userList.size() > 0) {
+            throw new AppException("不能删除有员工的部门");
+        } else {
+            int i = 0;
+            i += userDepMapper.deleteByPrimaryKey(uuid);
+            // 如果是父菜单 删除其所有子菜单
+            UserDepExample userDepExample = new UserDepExample();
+            userDepExample.createCriteria().andDepTopidEqualTo(uuid);
+            List<UserDep> userDepList = userDepMapper.selectByExample(userDepExample);
+            if (userDepList.size() > 0 && !userDepList.equals("")) {
+                for (UserDep userDep : userDepList) {
+                    i += userDepMapper.deleteByPrimaryKey(userDep.getUuid());
+                    UserDepExample example = new UserDepExample();
+                    // 如果还有子菜单 删除
+                    example.createCriteria().andDepTopidEqualTo(userDep.getUuid());
+                    i += userDepMapper.deleteByExample(example);
+                }
             }
+            return i;
         }
-        return i;
     }
 
     @Override
     public int editDep(UserDep userDep) {
         if (userDep.getUuid() == null || userDep.getUuid().equals("")) {
+            // 新增
             userDep.setUuid(UUIDUtil.generateUUID());
             // 新增 为false
             setDepLevel(userDep, false);
@@ -102,12 +124,12 @@ public class UserDepServiceImpl implements UserDepService {
      * @param userDep 实体类
      * @param isUpdFlg 是否是更新 更新为true 新增为false
      */
-    protected void setDepLevel(UserDep userDep, Boolean isUpdFlg){
+    public void setDepLevel(UserDep userDep, Boolean isUpdFlg){
         if (userDep.getDepTopid() == null || userDep.getDepTopid().equals("")){
             //如果没有上级菜单，那么他就是一级菜单
             userDep.setDepLevel(1);
             if (!isUpdFlg) {
-                //插入操作  并排序
+                //新增操作  并排序
                 UserDepExample userDepExample = new UserDepExample();
                 userDepExample.createCriteria().andDepTopidEqualTo("");
                 userDepExample.setOrderByClause("Show_Idx DESC");

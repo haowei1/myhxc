@@ -60,7 +60,7 @@
 
   <script>
     var formLayerIndex;
-    var layero;
+    // var layero;
     layui.use(['table'], function () {
       var table = layui.table;
       var form = layui.form;
@@ -86,7 +86,7 @@
             var arr=new Array();
             $.each(data,function (i,record) {
               arr.push(record.uuid);
-            })
+            });
 
             /*var arry = '';
             $.each(data, function (i, record) {
@@ -97,23 +97,23 @@
               }
             });*/
 
-              layer.confirm('真的删除行么', function (index) {
-                $.ajax({
-                  type: 'post',
-                  url: './m0001/list/delete?random=' + Math.random(),
-                  data: {
-                    'uuids': arr.toString()
-                  },
-                  success: function (data) {
-                    if (data.code != 0) {
-                      layer.alert(data.msg)
-                    } else {
-                      layer.close(index);
-                      active.reload();
-                    }
+            layer.confirm('真的删除行么', function (index) {
+              $.ajax({
+                type: 'post',
+                url: './m0001/list/delete?random=' + Math.random(),
+                data: {
+                  'uuids': arr.toString()
+                },
+                success: function (data) {
+                  if (data.code != 0) {
+                    layer.alert(data.msg)
+                  } else {
+                    layer.close(index);
+                    active.reload();
                   }
-                })
-              });
+                }
+              })
+            });
           }
         },
         reload: function () {
@@ -153,8 +153,7 @@
           , { field: 'userDepnm', title: '所属部门', width: 120 }
           , { field: 'userTel', title: '联系电话', width: 120 }
           , { field: 'handheldDevice', title: '手持设备', width: 120 }
-          , {
-            field: 'isconstructionunit', title: '是否施工方账户', width: 140, templet: function (res) {
+          , { field: 'isconstructionunit', title: '是否施工方账户', width: 140, templet: function (res) {
               if (res.isconstructionunit === '0') {
                 return '是';
               } else {
@@ -162,8 +161,7 @@
               }
             }
           }
-          , {
-            field: 'isroadpatrol', title: '是否路巡人员', width: 120, templet: function (res) {
+          , { field: 'isroadpatrol', title: '是否路巡人员', width: 120, templet: function (res) {
               if (res.isroadpatrol === '0') {
                 return '是';
               } else {
@@ -171,8 +169,7 @@
               }
             }
           }
-          , {
-            field: 'isdesignatedcu', title: '是否可分配施工方', width: 160, templet: function (res) {
+          , { field: 'isdesignatedcu', title: '是否可分配施工方', width: 160, templet: function (res) {
               if (res.isdesignatedcu === '0') {
                 return '是';
               } else {
@@ -180,8 +177,7 @@
               }
             }
           }
-          , {
-            field: 'isendtask', title: '是否可结束任务', width: 140, templet: function (res) {
+          , { field: 'isendtask', title: '是否可结束任务', width: 140, templet: function (res) {
               if (res.isendtask === '0') {
                 return '是';
               } else {

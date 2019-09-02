@@ -39,8 +39,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private HttpServletRequest request;
 
-    Logger logger = Logger.getLogger(UserServiceImpl.class);
-
     @Override
     public User login(String name, String password) {
         UserExample userExample = new UserExample();
@@ -62,8 +60,6 @@ public class UserServiceImpl implements UserService {
         MenuExample menuExample = new MenuExample();
         menuExample.setOrderByClause("SORT");
         List<Menu> menuList = menuMapper.selectByExample(menuExample);
-
-        logger.error(menuList.toString());
         // 获取当前登录的用户信息
         User loginInfo = (User) request.getSession().getAttribute("userInfo");
         List<String> menuUuids = new ArrayList<>();
@@ -73,8 +69,8 @@ public class UserServiceImpl implements UserService {
             userRoleExample.createCriteria().andUserUuidEqualTo(loginInfo.getUuid());
             List<UserRole> userRoleList = userRoleMapper.selectByExample(userRoleExample);
             if (userRoleList.size() > 0 && userRoleList != null) {
+                // 如果不为空，遍历循环获取用户对应的菜单信息
                 for (UserRole userRole : userRoleList) {
-                    // 如果不为空，遍历循环获取相应的内容
                     RoleAuthorityExample roleAuthorityExample = new RoleAuthorityExample();
                     roleAuthorityExample.or().andRoleUuidEqualTo(userRole.getRoleUuid());
                     List<RoleAuthority> roleAuthorityList = roleAuthorityMapper.selectByExample(roleAuthorityExample);
@@ -85,7 +81,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
             }
-
+            // 遍历循环放入对应的集合
             for (Menu menu : menuList) {
                 if (menu.getParentId() != null && !"".equals(menu.getParentId())) {
                     TreeNode treeNode = new TreeNode();
@@ -191,6 +187,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int editUser(User user) {
         User loginInfo = (User) request.getSession().getAttribute("userInfo");
+        // 如果有部门 设置部门名称
         if (user.getUserDep() != null && !"".equals(user.getUserDep())) {
             UserDep userDep = userDepMapper.selectByPrimaryKey(user.getUserDep());
             if (userDep != null && !"".equals(userDep)){
@@ -199,13 +196,14 @@ public class UserServiceImpl implements UserService {
                 user.setUserDepnm("");
             }
         }
-
+        // 如果没有id 则为新增
         if (user.getUuid() == null || "".equals(user.getUuid())) {
             // 新增
             UserExample userExample = new UserExample();
             if (user.getUserCode() != null && !"".equals(user.getUserCode().trim())) {
                 userExample.createCriteria().andUserCodeEqualTo(user.getUserCode());
             }
+            // 如果用户名存在 抛出异常
             List<User> userList = userMapper.selectByExample(userExample);
             if (userList != null && userList.size() > 0) {
                 throw new AppException("用户名已存在，请重新输入！");
@@ -240,15 +238,15 @@ public class UserServiceImpl implements UserService {
             }
             List<User> list = userMapper.selectByExample(userExample);
             if (list.size() > 0 && list != null){
-                throw new AppException("用户id不能重复");
+                throw new AppException("用户名不能重复");
             }
             // 修改对应的权限表
             if (user.getUserRole() != null && !"".equals(user.getUserRole())){
-                String[] userRoleS = user.getUserRole().split(",");
+                String[] userRoles = user.getUserRole().split(",");
                 UserRoleExample userRoleExample = new UserRoleExample();
                 userRoleExample.createCriteria().andUserUuidEqualTo(user.getUuid());
                 userRoleMapper.deleteByExample(userRoleExample);
-                for (String userRole : userRoleS) {
+                for (String userRole : userRoles) {
                     UserRole role = new UserRole();
                     role.setUuid(UUIDUtil.generateUUID());
                     role.setUserUuid(user.getUuid());

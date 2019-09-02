@@ -398,4 +398,22 @@ public class UserDep {
     public void setBeizhu(String beizhu) {
         this.beizhu = beizhu == null ? null : beizhu.trim();
     }
+
+    @Override
+    public String toString() {
+        return "UserDep{" +
+                "uuid='" + uuid + '\'' +
+                ", depName='" + depName + '\'' +
+                ", depLevel=" + depLevel +
+                ", depTopid='" + depTopid + '\'' +
+                ", depTopname='" + depTopname + '\'' +
+                ", showIdx=" + showIdx +
+                ", createUser='" + createUser + '\'' +
+                ", createDate=" + createDate +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateDate=" + updateDate +
+                ", delfg='" + delfg + '\'' +
+                ", beizhu='" + beizhu + '\'' +
+                '}';
+    }
 }

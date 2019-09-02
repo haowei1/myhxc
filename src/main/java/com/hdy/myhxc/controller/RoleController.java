@@ -25,7 +25,7 @@ public class RoleController {
     private RoleService roleServiceImpl;
 
     /**
-     * 查询当前用户的权限
+     * 获取所有用户的对应的权限信息
      * @param info
      * @return
      */

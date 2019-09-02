@@ -12,7 +12,7 @@ import java.util.List;
 public interface RoleService {
 
     /**
-     * 查询当前用户的权限
+     * 查询所有用户的权限信息
      * @param roleName
      * @param page
      * @param limit

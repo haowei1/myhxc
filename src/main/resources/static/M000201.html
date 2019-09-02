@@ -79,8 +79,7 @@
         , method: 'post'
         , cols: [[
           { type: 'numbers', title: '序号' }
-          , {
-            field: 'depName', title: '部门', width: 900, templet: function (res) {
+          , { field: 'depName', title: '部门', width: 900, templet: function (res) {
               if (res.depLevel === 1) {
                 return '<strong>' + res.depName + '</strong>';
 
@@ -119,6 +118,10 @@
                   layer.close(index);
                   active.reload();
                 }
+              },
+              error: function (e) {
+                layer.close();
+                layer.alert("不能删除有员工的部门");
               }
             });
           });

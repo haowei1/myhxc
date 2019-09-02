@@ -37,4 +37,12 @@ public class UserDepEx extends UserDep {
     public void setUserList(List<User> userList) {
         this.userList = userList;
     }
+
+    @Override
+    public String toString() {
+        return "UserDepEx{" +
+                "children=" + children +
+                ", userList=" + userList +
+                '}';
+    }
 }
