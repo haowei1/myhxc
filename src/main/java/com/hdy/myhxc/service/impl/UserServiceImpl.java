@@ -11,7 +11,6 @@ import com.hdy.myhxc.model.*;
 import com.hdy.myhxc.service.UserService;
 import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,12 +66,12 @@ public class UserServiceImpl implements UserService {
             // 获取当前用户权限信息
             UserRoleExample userRoleExample = new UserRoleExample();
             userRoleExample.createCriteria().andUserUuidEqualTo(loginInfo.getUuid());
-            List<UserRole> userRoleList = userRoleMapper.selectByExample(userRoleExample);
+                List<UserRole> userRoleList = userRoleMapper.selectByExample(userRoleExample);
             if (userRoleList.size() > 0 && userRoleList != null) {
                 // 如果不为空，遍历循环获取用户对应的菜单信息
                 for (UserRole userRole : userRoleList) {
                     RoleAuthorityExample roleAuthorityExample = new RoleAuthorityExample();
-                    roleAuthorityExample.or().andRoleUuidEqualTo(userRole.getRoleUuid());
+                    roleAuthorityExample.createCriteria().andRoleUuidEqualTo(userRole.getRoleUuid());
                     List<RoleAuthority> roleAuthorityList = roleAuthorityMapper.selectByExample(roleAuthorityExample);
                     if (roleAuthorityList.size() > 0 && roleAuthorityList != null) {
                         for (RoleAuthority roleAuthority : roleAuthorityList) {
@@ -83,7 +82,8 @@ public class UserServiceImpl implements UserService {
             }
             // 遍历循环放入对应的集合
             for (Menu menu : menuList) {
-                if (menu.getParentId() != null && !"".equals(menu.getParentId())) {
+                // 权限中包含的子菜单
+                if (menuUuids.contains(menu.getUuid())) {
                     TreeNode treeNode = new TreeNode();
                     treeNode.setUuid(menu.getUuid());
                     treeNode.setId(menu.getMenuId());
@@ -92,20 +92,8 @@ public class UserServiceImpl implements UserService {
                     treeNode.setIconCls(menu.getMenuIco());
                     treeNode.setUrl(menu.getMenuUrl());
                     tree.add(treeNode);
-                } else {
-                    if (menuUuids.contains(menu.getUuid())) {
-                        TreeNode treeNode = new TreeNode();
-                        treeNode.setUuid(menu.getUuid());
-                        treeNode.setId(menu.getMenuId());
-                        treeNode.setText(menu.getMenuName());
-                        treeNode.setIconCls(menu.getMenuIco());
-                        treeNode.setPid(menu.getParentId());
-                        treeNode.setUrl(menu.getMenuUrl());
-                        tree.add(treeNode);
-                    }
                 }
             }
-
             List<TreeNode> fatherNode = getFatherNode(tree);
             ArrayList<TreeNode> treeNodes = new ArrayList<>();
             for (TreeNode node : fatherNode) {
@@ -146,8 +134,8 @@ public class UserServiceImpl implements UserService {
      */
     public final static List<TreeNode> getChildrenNode(String pid, List<TreeNode> tree){
         List<TreeNode> list=new ArrayList<>();
-        for (TreeNode jsonTreeNode:tree) {
-            if (jsonTreeNode.getPid()==null) {
+        for (TreeNode jsonTreeNode : tree) {
+            if (jsonTreeNode.getPid() == null) {
                 continue;
             }
             if (jsonTreeNode.getPid().equals(pid)){

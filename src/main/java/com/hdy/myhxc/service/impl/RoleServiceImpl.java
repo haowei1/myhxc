@@ -13,7 +13,6 @@ import com.hdy.myhxc.model.ex.RoleEx;
 import com.hdy.myhxc.service.RoleService;
 import com.hdy.myhxc.util.DateUtil;
 import com.hdy.myhxc.util.UUIDUtil;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +52,7 @@ public class RoleServiceImpl implements RoleService {
             for (RoleEx roleMenu : roleList) {
                 if (roleMenu.getMenuList() != null && roleMenu.getMenuList().size() > 0) {
                     for (Menu menu : roleMenu.getMenuList()) {
-                        menuUuidList.add(menu.getUuid()+"");
+                        menuUuidList.add(menu.getUuid());
                     }
                 }
                 String roleAuthority = "";
@@ -70,6 +69,8 @@ public class RoleServiceImpl implements RoleService {
                     }
                 }
                 roleMenu.setRoleAuthority(roleAuthority);
+                // 清空id的集合再进行重新添加
+                menuUuidList.clear();
             }
         }
         resultData.setData(roleList);
