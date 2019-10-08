@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author m760384371
@@ -33,8 +34,10 @@ public class UserController {
     public ResponseEntity<ResultData> login(@ModelAttribute FormInfo info){
         User user = userServiceImpl.login(info.getForm().get("User_Code").trim(), info.getForm().get("User_Psd"));
         user.setUserPsd("");
-        request.getSession().removeAttribute("userInfo");
-        request.getSession().setAttribute("userInfo", user);
+        HttpSession session = request.getSession();
+        session.removeAttribute("userInfo");
+        session.setAttribute("userInfo", user);
+        session.setMaxInactiveInterval(60*60);
         ResultData resultData = new ResultData();
         return new ResponseEntity<>(resultData, HttpStatus.OK);
     }

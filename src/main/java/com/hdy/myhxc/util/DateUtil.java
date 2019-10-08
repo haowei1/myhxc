@@ -10,6 +10,7 @@ import java.util.Date;
 /**
  * 取得时间用的util类
  *
+ * @author m760384371
  */
 public final class DateUtil {
 
@@ -59,8 +60,9 @@ public final class DateUtil {
 	 * @return 合法：true，非法：false
 	 */
 	public static boolean checkValidDate(String dateStr, String format) {
-		if (!StringUtils.hasText(dateStr))
+		if (!StringUtils.hasText(dateStr)){
 			return false;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		sdf.setLenient(false);
 
@@ -75,9 +77,9 @@ public final class DateUtil {
 	}
 
 	public static boolean isBelong(){
-
-	    SimpleDateFormat df = new SimpleDateFormat("HH:mm");//设置日期格式
-	    Date now =null;
+		//设置日期格式
+	    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+	    Date now = null;
 	    Date beginTime = null;
 	    Date endTime = null;
 	    try {
@@ -88,7 +90,7 @@ public final class DateUtil {
 	        e.printStackTrace();
 	    }
 
-	    Boolean flag = belongCalendar(now, beginTime, endTime);
+	    boolean flag = belongCalendar(now, beginTime, endTime);
 	    return flag;
 	}
 

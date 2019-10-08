@@ -1,5 +1,8 @@
 package com.hdy.myhxc.exception;
 
+/**
+ * @author m760384371
+ */
 public class AppException extends RuntimeException{
 
     private String errorMsg;
